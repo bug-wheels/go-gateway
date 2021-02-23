@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"net/url"
+	"strings"
 )
 
 func NewMultipleHostsReverseProxy(targets []*url.URL) *httputil.ReverseProxy {
@@ -21,7 +22,32 @@ type LoadBalanceRoute interface {
 	ObtainInstance(path string) url.URL
 }
 
+type Route struct {
+	Path string
+	ServiceName string
+}
+
 type DiscoveryLoadBalanceRoute struct {
+
+	DiscoveryClient DiscoveryClient
+
+	Routes []Route
+
+}
+
+func (d DiscoveryLoadBalanceRoute) ObtainInstance(path string) *url.URL {
+	for _, route := range d.Routes {
+		if strings.Index(path, route.Path) == 0 {
+			instances, _ := d.DiscoveryClient.GetInstances(route.ServiceName)
+			instance := instances[rand.Int()%len(instances)]
+			scheme := "http"
+			return &url.URL{
+				Scheme: scheme,
+				Host: instance.GetHost(),
+			}
+		}
+	}
+	return nil
 }
 
 func NewLoadBalanceReverseProxy(lb LoadBalanceRoute) *httputil.ReverseProxy {

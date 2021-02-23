@@ -1,23 +1,20 @@
 package main
 
 import (
-	"fmt"
 	"go-gateway/proxy"
 	"net/http"
-	"net/url"
 )
 
 func main() {
-	proxy := proxy.NewOriginReverseProxy([]*url.URL{
-		{
-			Scheme: "http",
-			Host:   "localhost:9091",
-		},
-		{
-			Scheme: "http",
-			Host:   "localhost:9092",
+	registry, _ := proxy.NewConsulServiceRegistry("127.0.0.1", 8500, "")
+	reverseProxy := proxy.NewLoadBalanceReverseProxy(&proxy.DiscoveryLoadBalanceRoute{
+		DiscoveryClient: registry,
+		Routes: []proxy.Route{
+			{
+				Path: "abc",
+				ServiceName: "abc",
+			},
 		},
 	})
-	err := http.ListenAndServe(":19090", proxy)
-	fmt.Println(err)
+	http.ListenAndServe(":19090", reverseProxy)
 }

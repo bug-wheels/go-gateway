@@ -2,6 +2,7 @@ package test
 
 import (
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"go-gateway/proxy"
 	"net/http"
 	"net/url"
@@ -20,10 +21,16 @@ func TestMultipleHostsReverseProxy(t *testing.T) {
 			Scheme: "http",
 			Host:   "localhost:9091",
 		},
-		{
-			Scheme: "http",
-			Host:   "localhost:9092",
-		},
 	})
 	http.ListenAndServe(":9090", proxy)
+}
+
+func TestGin(t *testing.T)  {
+	r := gin.Default()
+	r.GET("/ping", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"message": "pong",
+		})
+	})
+	r.Run(":9091") // listen and serve on 0.0.0.0:9091
 }
