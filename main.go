@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	proxy := proxy.NewMultipleHostsReverseProxy([]*url.URL{
+	proxy := proxy.NewOriginReverseProxy([]*url.URL{
 		{
 			Scheme: "http",
 			Host:   "localhost:9091",
