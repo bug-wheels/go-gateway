@@ -22,7 +22,7 @@ func TestMultipleHostsReverseProxy(t *testing.T) {
 			Host:   "localhost:9091",
 		},
 	})
-	http.ListenAndServe(":9090", proxy)
+	http.ListenAndServe(":19090", proxy)
 }
 
 func TestGin(t *testing.T)  {

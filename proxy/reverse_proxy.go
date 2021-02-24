@@ -13,13 +13,12 @@ func NewMultipleHostsReverseProxy(targets []*url.URL) *httputil.ReverseProxy {
 		target := targets[rand.Int()%len(targets)]
 		req.URL.Scheme = target.Scheme
 		req.URL.Host = target.Host
-		req.URL.Path = target.Path
 	}
 	return &httputil.ReverseProxy{Director: director}
 }
 
 type LoadBalanceRoute interface {
-	ObtainInstance(path string) url.URL
+	ObtainInstance(path string) *url.URL
 }
 
 type Route struct {
