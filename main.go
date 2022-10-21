@@ -11,7 +11,7 @@ func main() {
 		DiscoveryClient: registry,
 		Routes: []proxy.Route{
 			{
-				Path: "abc",
+				Path:        "abc",
 				ServiceName: "abc",
 			},
 		},
